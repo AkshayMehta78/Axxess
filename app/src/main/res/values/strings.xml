@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Axxess</string>
+    <string name="search_title">Search Image</string>
+    <string name="send_button_text">Post</string>
+</resources>
