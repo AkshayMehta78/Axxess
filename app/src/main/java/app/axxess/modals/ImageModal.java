@@ -1,5 +1,6 @@
 package app.axxess.modals;
 
+import android.arch.persistence.room.Entity;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -13,7 +14,6 @@ public class ImageModal {
 
     @SerializedName("data")
     public List<ImageItem> data;
-
 
     public static class ImageItem implements Parcelable{
         @SerializedName("id")
@@ -54,17 +54,21 @@ public class ImageModal {
         };
     }
 
-    public static class Links implements Parcelable {
+    public static class Links implements Parcelable{
         @SerializedName("link")
         public String link;
+        @SerializedName("type")
+        public String type;
 
         protected Links(Parcel in) {
             link = in.readString();
+            type = in.readString();
         }
 
         @Override
         public void writeToParcel(Parcel dest, int flags) {
             dest.writeString(link);
+            dest.writeString(type);
         }
 
         @Override

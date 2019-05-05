@@ -10,10 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DecodeFormat;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -48,9 +44,9 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
 
         if(links!=null && links.size() > 0){
             String imagePath = links.size() == 3 ? links.get(2).link : links.size() == 2 ? links.get(1).link: links.get(0).link;
-            if(!imagePath.isEmpty()){
+            if(!imagePath.isEmpty() && !imagePath.contains(".mp4")){
                 viewHolder.resultImageView.setVisibility(View.VISIBLE);
-                Picasso.get().load(imagePath).fit().error(R.drawable.ic_launcher_background)
+                Picasso.get().load(imagePath).resize(100,0).error(R.drawable.ic_launcher_background)
                         .centerCrop().priority(Picasso.Priority.HIGH).into(viewHolder.resultImageView);
             }
         }
@@ -86,7 +82,6 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
                 Intent intent = new Intent(mActivity,DetailsActivity.class);
                 intent.putExtra(IMAGE_ITEM,mImageItemList.get(position));
                 mActivity.startActivity(intent);
-
             }
         }
     }

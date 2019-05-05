@@ -1,26 +1,41 @@
 package app.axxess;
 
-import android.support.v7.app.AppCompatActivity;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import app.axxess.Utility.Utility;
+import app.axxess.ViewModal.CommentViewModel;
+import app.axxess.modals.Comment;
 import app.axxess.modals.ImageModal;
 
-public class DetailsActivity extends AppCompatActivity {
+public class DetailsActivity extends AppCompatActivity implements View.OnClickListener{
 
     private ImageModal.ImageItem mImageItem;
     private ImageView mDetailedImageView;
+    private CommentViewModel mCommentViewModel;
+    private EditText mCommentEditText;
+    private AppCompatButton mPostCommentButton;
+    private LinearLayout mCommentsLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
+
+        mCommentViewModel = ViewModelProviders.of(this).get(CommentViewModel.class);
 
         initViews();
 
@@ -28,8 +43,30 @@ public class DetailsActivity extends AppCompatActivity {
         setToolbarTitle();
 
         renderImage();
+
+        fetchAllComments();
+
     }
 
+    private void fetchAllComments() {
+        mCommentViewModel.fetchAllCommentsById(mImageItem.id).observe(this, words -> {
+                // TODO: update the list
+            mCommentsLayout.removeAllViews();
+            for(Comment comment : words){
+                TextView tv = new TextView(this);
+                tv.setText(comment.comment);
+                tv.setPadding(40,10,10,10);
+                tv.setTextSize(20.0f);
+                mCommentsLayout.addView(tv);
+            }
+        });
+
+    }
+
+    /**
+     * Render Image using Picasso
+     * TODO: Can be moved to central place
+     */
     private void renderImage() {
         List<ImageModal.Links> links = mImageItem.images;
 
@@ -42,18 +79,48 @@ public class DetailsActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Initialize all views required
+     */
     private void initViews() {
         mDetailedImageView = findViewById(R.id.detailedImageView);
+        mCommentEditText = findViewById(R.id.commentEditText);
+        mPostCommentButton = findViewById(R.id.postCommentButton);
+        mCommentsLayout = findViewById(R.id.commentsLayout);
+
+        mPostCommentButton.setOnClickListener(this);
     }
 
+    /**
+     * Dynamically set title
+     */
     private void setToolbarTitle() {
         getSupportActionBar().setTitle(mImageItem !=null ? mImageItem.title : "");
     }
 
+    /**
+     * Get ImageItem data from Bundle
+     */
     private void getDataFromIntent() {
         if(getIntent()!=null){
             Bundle data = getIntent().getExtras();
             mImageItem = data.getParcelable(Constants.INTENT_KEYS.IMAGE_ITEM);
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(v.getId()==R.id.postCommentButton){
+            String comment = mCommentEditText.getText().toString().trim();
+            if(!comment.isEmpty()){
+                Comment item = new Comment();
+                item.id = mImageItem.id;
+                item.comment = comment;
+                mCommentViewModel.insert(item);
+                Utility.showToast(this,"Comment Added");
+                mCommentEditText.setText("");
+                Utility.hideKeyboard(this);
+            }
         }
     }
 }

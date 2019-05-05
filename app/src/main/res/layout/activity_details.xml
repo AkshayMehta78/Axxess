@@ -3,15 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/parentLayout"
+    android:background="@color/white"
     tools:context=".DetailsActivity">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
         android:layout_above="@+id/addCommentLayout"
         android:id="@+id/contentLayout">
 
@@ -25,14 +28,22 @@
             android:background="@color/bg_color"
             android:id="@+id/detailedImageView"/>
 
-        <RelativeLayout
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding"
+            android:background="@color/bg_color_light"
+            android:textStyle="bold"
+            android:text="@string/all_comments"/>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/white"
-            android:layout_below="@+id/detailedImageView"
-            android:id="@+id/commentsLayout"></RelativeLayout>
+            android:orientation="vertical"
+            android:id="@+id/commentsLayout"></LinearLayout>
 
-    </RelativeLayout>
+    </LinearLayout>
 
     </ScrollView>
 
@@ -40,7 +51,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@color/white"
+        android:background="@color/bg_color_light"
         android:id="@+id/addCommentLayout"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
@@ -51,12 +62,14 @@
         <android.support.v7.widget.AppCompatEditText
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:id="@+id/commentEditText"
             android:layout_weight="0.7"/>
 
         <android.support.v7.widget.AppCompatButton
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:text="@string/send_button_text"
+            android:id="@+id/postCommentButton"
             android:layout_weight="0.3"/>
 
     </LinearLayout>

@@ -1,7 +1,9 @@
 package app.axxess;
 
 import android.annotation.SuppressLint;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +17,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import app.axxess.Network.GetDataService;
 import app.axxess.Network.RetrofitNetworkInstance;
@@ -34,8 +37,6 @@ public class HomeActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private GetDataService mGetDataService;
     private ImageListAdapter mImageListAdapter;
-
-
 
     @SuppressLint("CheckResult")
     @Override
@@ -60,12 +61,9 @@ public class HomeActivity extends AppCompatActivity {
 
     @SuppressLint("ClickableViewAccessibility")
     private void registerForListener() {
-        mRecyclerView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                Utility.hideKeyboard(HomeActivity.this);
-                return false;
-            }
+        mRecyclerView.setOnTouchListener((v, event) -> {
+            Utility.hideKeyboard(HomeActivity.this);
+            return false;
         });
     }
 

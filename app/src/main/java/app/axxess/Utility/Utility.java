@@ -3,6 +3,7 @@ package app.axxess.Utility;
 import android.app.Activity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 public class Utility {
 
@@ -17,4 +18,7 @@ public class Utility {
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
+    public static void showToast(Activity activity, String message) {
+        Toast.makeText(activity,message,Toast.LENGTH_LONG).show();
+    }
 }

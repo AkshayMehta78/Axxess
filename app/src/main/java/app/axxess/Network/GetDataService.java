@@ -11,6 +11,6 @@ import retrofit2.http.Query;
 public interface GetDataService {
 
     @Headers("Authorization:Client-ID 137cda6b5008a7c")
-    @GET("3/gallery/search/1")
+    @GET("3/gallery/search/1/viral/")
     Call<ImageModal> searchQueryResults(@Query("q") String query);
 }
