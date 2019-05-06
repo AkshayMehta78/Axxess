@@ -11,39 +11,32 @@ import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.View;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import app.axxess.Network.GetDataService;
-import app.axxess.Network.RetrofitNetworkInstance;
+import app.axxess.Network.APIManager;
+import app.axxess.Network.SearchAPIInterface;
 import app.axxess.Utility.SimpleDividerItemDecoration;
 import app.axxess.Utility.Utility;
 import app.axxess.adapters.ImageListAdapter;
 import app.axxess.modals.ImageModal;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements SearchAPIInterface {
 
-    private static final String TAG = HomeActivity.class.getSimpleName();
     private SearchView mSearchView;
     private RecyclerView mRecyclerView;
-    private GetDataService mGetDataService;
     private ImageListAdapter mImageListAdapter;
+    private APIManager mApiManager;
 
     @SuppressLint("CheckResult")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
-        mGetDataService = RetrofitNetworkInstance.getRetrofitInstance().create(GetDataService.class);
+        mApiManager = new APIManager(this);
 
         initViews();
 
@@ -53,7 +46,7 @@ public class HomeActivity extends AppCompatActivity {
                 .distinctUntilChanged()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(query -> handleAPICall(query), throwable -> Log.e("Result", throwable.getMessage(), throwable));
+                .subscribe(query -> mApiManager.handleAPICall(query), throwable -> Log.e("Result", throwable.getMessage(), throwable));
 
         registerForListener();
 
@@ -91,35 +84,6 @@ public class HomeActivity extends AppCompatActivity {
 
 
 
-    /**
-     * Handle API call when triggered from Observable
-     * @param query
-     */
-    private void handleAPICall(String query) {
-        Call<ImageModal> response = null;
-        try {
-            response = mGetDataService.searchQueryResults(URLEncoder.encode(query,"UTF-8"));
-            response.enqueue(new Callback<ImageModal>() {
-                @Override
-                public void onResponse(Call<ImageModal> call, Response<ImageModal> response) {
-                    ImageModal modal = response.body();
-                    List<ImageModal.ImageItem> imageItemList = modal.data;
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        renderRecyclerViewData(imageItemList.stream().filter(imageItem -> imageItem.images!=null).collect(Collectors.toList()));
-                    }else{
-                        renderRecyclerViewData(imageItemList);
-                    }
-                }
-                @Override
-                public void onFailure(Call<ImageModal> call, Throwable t) {
-                    Log.e(TAG, t.toString());
-                }
-            });
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-    }
 
 
     /**
@@ -144,6 +108,19 @@ public class HomeActivity extends AppCompatActivity {
                 }else{
                     mImageListAdapter.updateList(imageItemList);
                 }
+        }
+    }
+
+    /**
+     * Handle when API callback sends Search Result
+     * @param imageItemList
+     */
+    @Override
+    public void onSearchResultSucess(List<ImageModal.ImageItem> imageItemList) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            renderRecyclerViewData(imageItemList.stream().filter(imageItem -> imageItem.images!=null).collect(Collectors.toList()));
+        }else{
+            renderRecyclerViewData(imageItemList);
         }
     }
 }
