@@ -47,14 +47,49 @@ public class DetailsActivity extends AppCompatActivity implements View.OnClickLi
         setToolbarTitle();
 
         renderMultiMedia();
-
         fetchAllComments();
 
     }
 
+
+    /**
+     * Initialize all views required
+     */
+    private void initViews() {
+        mDetailedImageView = findViewById(R.id.detailedImageView);
+        mCommentEditText = findViewById(R.id.commentEditText);
+        mPostCommentButton = findViewById(R.id.postCommentButton);
+        mCommentsLayout = findViewById(R.id.commentsLayout);
+        mPostCommentButton.setOnClickListener(this);
+    }
+
+
+
+    /**
+     * Dynamically set title
+     */
+    private void setToolbarTitle() {
+        getSupportActionBar().setTitle(mImageItem !=null ? mImageItem.title : "");
+    }
+
+
+
+    /**
+     * Get ImageItem data from Bundle
+     */
+    private void getDataFromIntent() {
+        if(getIntent()!=null){
+            Bundle data = getIntent().getExtras();
+            mImageItem = data.getParcelable(Constants.INTENT_KEYS.IMAGE_ITEM);
+        }
+    }
+
+
+    /**
+     * Fetch All Comments from ViewModal and Render it
+     */
     private void fetchAllComments() {
         mCommentViewModel.fetchAllCommentsById(mImageItem.id).observe(this, words -> {
-                // TODO: update the list
             mCommentsLayout.removeAllViews();
             for(Comment comment : words){
                 TextView tv = new TextView(this);
@@ -64,12 +99,12 @@ public class DetailsActivity extends AppCompatActivity implements View.OnClickLi
                 mCommentsLayout.addView(tv);
             }
         });
-
     }
+
+
 
     /**
      * Render Image using Picasso
-     * TODO: Can be moved to central place
      */
     private void renderMultiMedia() {
         List<ImageModal.Links> links = mImageItem.images;
@@ -86,34 +121,11 @@ public class DetailsActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    /**
-     * Initialize all views required
-     */
-    private void initViews() {
-        mDetailedImageView = findViewById(R.id.detailedImageView);
-        mCommentEditText = findViewById(R.id.commentEditText);
-        mPostCommentButton = findViewById(R.id.postCommentButton);
-        mCommentsLayout = findViewById(R.id.commentsLayout);
-        mPostCommentButton.setOnClickListener(this);
-    }
 
     /**
-     * Dynamically set title
+     * Handle click Listener for the Button On Click
+     * @param v
      */
-    private void setToolbarTitle() {
-        getSupportActionBar().setTitle(mImageItem !=null ? mImageItem.title : "");
-    }
-
-    /**
-     * Get ImageItem data from Bundle
-     */
-    private void getDataFromIntent() {
-        if(getIntent()!=null){
-            Bundle data = getIntent().getExtras();
-            mImageItem = data.getParcelable(Constants.INTENT_KEYS.IMAGE_ITEM);
-        }
-    }
-
     @Override
     public void onClick(View v) {
         if(v.getId()==R.id.postCommentButton){
@@ -126,6 +138,8 @@ public class DetailsActivity extends AppCompatActivity implements View.OnClickLi
                 Utility.showToast(this,"Comment Added");
                 mCommentEditText.setText("");
                 Utility.hideKeyboard(this);
+            }else{
+                Utility.showToast(this,"Please add some comment");
             }
         }
     }

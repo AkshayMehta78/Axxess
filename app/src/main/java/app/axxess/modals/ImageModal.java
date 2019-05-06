@@ -1,12 +1,9 @@
 package app.axxess.modals;
 
-import android.arch.persistence.room.Entity;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
-
-import org.json.JSONArray;
 
 import java.util.List;
 
@@ -14,6 +11,8 @@ public class ImageModal {
 
     @SerializedName("data")
     public List<ImageItem> data;
+
+
 
     public static class ImageItem implements Parcelable{
         @SerializedName("id")
@@ -53,6 +52,9 @@ public class ImageModal {
             }
         };
     }
+
+
+
 
     public static class Links implements Parcelable{
         @SerializedName("link")

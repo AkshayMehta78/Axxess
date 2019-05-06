@@ -7,6 +7,10 @@ import android.widget.Toast;
 
 public class Utility {
 
+    /**
+     * Hide Keyboard from an Activity
+     * @param activity
+     */
     public static void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         //Find the currently focused view, so we can grab the correct window token from it.
@@ -18,6 +22,11 @@ public class Utility {
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
+    /**
+     * Show toast method with message
+     * @param activity
+     * @param message
+     */
     public static void showToast(Activity activity, String message) {
         Toast.makeText(activity,message,Toast.LENGTH_LONG).show();
     }

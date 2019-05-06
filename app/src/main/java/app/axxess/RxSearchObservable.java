@@ -5,6 +5,9 @@ import android.support.v7.widget.SearchView;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 
+/**
+ * An Observable that emits all text inputted into searchview
+ */
 public class RxSearchObservable {
 
     public static Observable<String> fromView(SearchView searchView) {
@@ -14,7 +17,7 @@ public class RxSearchObservable {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                subject.onComplete();
+                subject.onNext(s);
                 return true;
             }
 

@@ -44,13 +44,10 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
         List<ImageModal.Links>  links = item.images;
 
         if(links!=null && links.size() > 0){
-            String imagePath = links.size() == 3 ? links.get(2).link : links.size() == 2 ? links.get(1).link: links.get(0).link;
-            if(!imagePath.isEmpty() && !imagePath.contains(".mp4")){
-                viewHolder.resultImageView.setVisibility(View.VISIBLE);
-                Picasso.get().load(imagePath).resize(200,0).error(R.drawable.ic_launcher_background)
+            ImageModal.Links imageLink = links.size() == 3 ? links.get(2) : links.size() == 2 ? links.get(1) : links.get(0);
+            if(!imageLink.link.isEmpty() && imageLink.type.contains("image")){
+                Picasso.get().load(imageLink.link).resize(200,0).error(R.drawable.ic_launcher_background)
                         .centerCrop().priority(Picasso.Priority.HIGH).into(viewHolder.resultImageView);
-            }else{
-                viewHolder.resultImageView.setImageResource(R.drawable.no_video);
             }
         }
 
