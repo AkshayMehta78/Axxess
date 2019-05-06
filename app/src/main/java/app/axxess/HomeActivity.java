@@ -57,8 +57,12 @@ public class HomeActivity extends AppCompatActivity {
                 .subscribe(query -> handleAPICall(query), throwable -> Log.e("Result", throwable.getMessage(), throwable));
 
         registerForListener();
+
     }
 
+    /**
+     * Handle Recyclerview touch listener
+     */
     @SuppressLint("ClickableViewAccessibility")
     private void registerForListener() {
         mRecyclerView.setOnTouchListener((v, event) -> {
@@ -68,7 +72,13 @@ public class HomeActivity extends AppCompatActivity {
     }
 
 
+
+    /**
+     * Handle API call when triggered from Observable
+     * @param query
+     */
     private void handleAPICall(String query) {
+        Log.e("query",query);
         Call<ImageModal> response = null;
         try {
             response = mGetDataService.searchQueryResults(URLEncoder.encode(query,"UTF-8"));
@@ -80,7 +90,12 @@ public class HomeActivity extends AppCompatActivity {
             public void onResponse(Call<ImageModal> call, Response<ImageModal> response) {
                 ImageModal modal = response.body();
                 List<ImageModal.ImageItem> imageItemList = modal.data;
-                renderRecyclerViewData(imageItemList);
+                Log.e("imageItemList",imageItemList.size()+"");
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    renderRecyclerViewData(imageItemList.stream().filter(imageItem -> imageItem.images!=null).collect(Collectors.toList()));
+                }else{
+                    renderRecyclerViewData(imageItemList);
+                }
             }
 
             @Override
@@ -91,6 +106,11 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
+
+    /**
+     * Render recyclerview  - if adapter is null, then set else notifydatasetchanged
+     * @param imageItemList
+     */
     private void renderRecyclerViewData(List<ImageModal.ImageItem> imageItemList) {
         if(mImageListAdapter == null){
             mImageListAdapter = new ImageListAdapter(this,imageItemList);
@@ -105,8 +125,17 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+
+
+    /**
+     * Init all views
+     */
     private void initViews() {
         mSearchView = findViewById(R.id.searchView);
         mRecyclerView = findViewById(R.id.recyclerView);
+    }
+
+    public void clearFocus() {
+        mSearchView.clearFocus();
     }
 }

@@ -2,12 +2,12 @@ package app.axxess.adapters;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
@@ -16,6 +16,7 @@ import java.util.List;
 
 import app.axxess.Constants;
 import app.axxess.DetailsActivity;
+import app.axxess.HomeActivity;
 import app.axxess.R;
 import app.axxess.modals.ImageModal;
 
@@ -46,8 +47,10 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
             String imagePath = links.size() == 3 ? links.get(2).link : links.size() == 2 ? links.get(1).link: links.get(0).link;
             if(!imagePath.isEmpty() && !imagePath.contains(".mp4")){
                 viewHolder.resultImageView.setVisibility(View.VISIBLE);
-                Picasso.get().load(imagePath).resize(100,0).error(R.drawable.ic_launcher_background)
+                Picasso.get().load(imagePath).resize(200,0).error(R.drawable.ic_launcher_background)
                         .centerCrop().priority(Picasso.Priority.HIGH).into(viewHolder.resultImageView);
+            }else{
+                viewHolder.resultImageView.setImageResource(R.drawable.no_video);
             }
         }
 
@@ -69,6 +72,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
 
         ImageView resultImageView;
         int position;
+        private Animation mBounceAnimation;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -79,10 +83,10 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
         @Override
         public void onClick(View v) {
             if(v == resultImageView){
+                ((HomeActivity)mActivity).clearFocus();
                 Intent intent = new Intent(mActivity,DetailsActivity.class);
                 intent.putExtra(IMAGE_ITEM,mImageItemList.get(position));
-                mActivity.startActivity(intent);
-            }
+                mActivity.startActivity(intent);            }
         }
     }
 }

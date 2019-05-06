@@ -1,6 +1,8 @@
 package app.axxess;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
@@ -9,7 +11,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.MediaController;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.squareup.picasso.Picasso;
 
@@ -42,7 +46,7 @@ public class DetailsActivity extends AppCompatActivity implements View.OnClickLi
         getDataFromIntent();
         setToolbarTitle();
 
-        renderImage();
+        renderMultiMedia();
 
         fetchAllComments();
 
@@ -67,14 +71,17 @@ public class DetailsActivity extends AppCompatActivity implements View.OnClickLi
      * Render Image using Picasso
      * TODO: Can be moved to central place
      */
-    private void renderImage() {
+    private void renderMultiMedia() {
         List<ImageModal.Links> links = mImageItem.images;
 
         if(links!=null && links.size() > 0){
             String imagePath = links.size() == 3 ? links.get(2).link : links.size() == 2 ? links.get(1).link: links.get(0).link;
             Log.e("imagePath",imagePath);
-            if(!imagePath.isEmpty()){
+            if(!imagePath.isEmpty() && !imagePath.endsWith(".mp4")){
+                mDetailedImageView.setVisibility(View.VISIBLE);
                 Picasso.get().load(imagePath).error(R.drawable.ic_launcher_background).priority(Picasso.Priority.HIGH).into(mDetailedImageView);
+            }else{
+                mDetailedImageView.setImageResource(R.drawable.no_video);
             }
         }
     }
@@ -87,7 +94,6 @@ public class DetailsActivity extends AppCompatActivity implements View.OnClickLi
         mCommentEditText = findViewById(R.id.commentEditText);
         mPostCommentButton = findViewById(R.id.postCommentButton);
         mCommentsLayout = findViewById(R.id.commentsLayout);
-
         mPostCommentButton.setOnClickListener(this);
     }
 
